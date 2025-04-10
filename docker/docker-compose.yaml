@@ -1,0 +1,31 @@
+services:
+  app:
+    build: 
+      context: ..
+      dockerfile: deploy/Dockerfile
+    image: booking-service-app 
+    container_name: booking-service-app
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_HOST=db
+      - DB_USER=user
+      - DB_PASSWORD=password
+      - DB_NAME=booking_service
+      - DB_PORT=5432
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15
+    container_name: booking-service-db
+    environment:
+      - TZ=Asia/Almaty
+      - PGTZ=Asia/Almaty
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=booking_service
+    ports:
+      - "5432:5432"
+    volumes:
+      - ../postgres_init:/docker-entrypoint-initdb.d

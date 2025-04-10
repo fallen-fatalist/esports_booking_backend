@@ -1,0 +1,66 @@
+INSERT INTO users (login, email, hashed_password, role, balance)
+VALUES
+    -- 6 Administrators
+    ('alice_admin', 'alice.admin@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'admin', 0),
+    ('bob_admin', 'bob.admin@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'admin', 0),
+    ('charlie_admin', 'charlie.admin@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'admin', 0),
+    ('diana_admin', 'diana.admin@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'admin', 0),
+    ('edward_admin', 'edward.admin@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'admin', 0),
+    ('frank_admin', 'frank.admin@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'admin', 0),
+
+    -- 43 Regular Users
+    ('john_gamer', 'john.doe@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'client', 500),
+    ('emma_gamer', 'emma.smith@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'client', 600),
+    ('michael_pro', 'michael.johnson@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'client', 700),
+    ('sarah_elite', 'sarah.williams@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'client', 800),
+    ('david_master', 'david.brown@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'client', 900),
+    ('linda_champion', 'linda.jones@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'client', 1000),
+    ('kevin_legend', 'kevin.miller@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'client', 1100),
+    ('sophia_warrior', 'sophia.davis@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'client', 0),
+    ('brian_sniper', 'brian.garcia@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'client', 1300),
+    ('olivia_shadow', 'olivia.rodriguez@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'client', 1400),
+    ('daniel_phantom', 'daniel.martinez@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'client', 1500),
+    ('natalie_rogue', 'natalie.lopez@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'client', 0),
+    ('jason_cyber', 'jason.harris@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'client', 1700),
+    ('megan_stealth', 'megan.clark@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'client', 1800),
+    ('ryan_assassin', 'ryan.lewis@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'client', 1900),
+    ('hannah_snake', 'hannah.walker@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'client', 0),
+    ('chris_hawk', 'chris.hall@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'client', 2100),
+    ('zoe_night', 'zoe.allen@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'client', 2200),
+    ('matt_shadow', 'matt.young@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'client', 0),
+    ('kelly_dagger', 'kelly.king@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'client', 2400),
+    ('eric_spartan', 'eric.scott@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'client', 2500),
+    ('rachel_fox', 'rachel.green@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'client', 2600),
+    ('aaron_dragon', 'aaron.adams@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'client', 2700),
+    ('laura_venom', 'laura.baker@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'client', 2800),
+    ('tom_blaze', 'tom.mitchell@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'client', 0),
+    ('emma_fury', 'emma.carter@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'client', 3000),
+    ('mark_thunder', 'mark.roberts@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'client', 3100),
+    ('lisa_scorch', 'lisa.evans@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'client', 0),
+    ('nick_hurricane', 'nick.wright@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'client', 3300),
+    ('anna_viper', 'anna.torres@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'client', 3400),
+    ('peter_flash', 'peter.nguyen@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'client', 3500),
+    ('victoria_blast', 'victoria.hill@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'client', 3600),
+    ('adam_nova', 'adam.flores@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'client', 3700),
+    ('jessica_comet', 'jessica.kelly@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'client', 3800),
+    ('steve_raptor', 'steve.ward@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'client', 3900),
+    ('elizabeth_eagle', 'elizabeth.reed@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'client', 4000),
+    ('jake_tornado', 'jake.wood@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'client', 0),
+    ('mary_lancer', 'mary.gray@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'client', 4200),
+    ('keith_phoenix', 'keith.bryant@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'client', 4300),
+    ('samantha_quake', 'samantha.russell@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'client', 4400),
+    ('brandon_zeus', 'brandon.kennedy@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'client', 4500),
+    ('julie_strike', 'julie.murray@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'client', 4600),
+    ('nathan_blade', 'nathan.bishop@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'client', 4700),
+    ('michelle_wraith', 'michelle.lawrence@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'client', 4800);
+
+
+INSERT INTO users (login, email, hashed_password, status, role, balance)
+VALUES
+-- Blocked Users
+    ('daniel_cool', 'daniel.martin@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'blocked', 'client', 300),
+    ('natalie_killer', 'natalie.kun@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'blocked', 'client', 1000),
+    ('jason_nomad', 'jason.harrison@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'blocked', 'client', 0),
+    ('ryan_lurker', 'ryan.levi@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'blocked', 'client', 600),
+    ('hannah_shark', 'hannah.venn@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'blocked', 'client', 0),
+    ('chris_canary', 'chris.matson@example.com', '$2a$12$ABCDEFG1234567890ABCDEFGHIJKL', 'blocked', 'client', 0);
