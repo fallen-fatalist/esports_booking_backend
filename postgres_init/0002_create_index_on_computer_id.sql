@@ -1,1 +1,1 @@
-CREATE INDEX idx_computers_id ON computers_specs(computer_id);
+CREATE INDEX idx_computers_id ON computers(computer_id);
