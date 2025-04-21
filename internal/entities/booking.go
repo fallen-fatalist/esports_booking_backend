@@ -10,5 +10,4 @@ type Booking struct {
 	TotalPrice int    `json:"total_price"`
 	Status    string `json:"status"`
 	CreatedAt string `json:"created_at"`
-
 }

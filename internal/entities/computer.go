@@ -1,7 +1,8 @@
 package entities
 
-type ComputerSpecs struct {
+type Computer struct {
 	ID        int64  `json:"id"`
+	Status    string `json:"status"`
 	CPU       string `json:"cpu"`
 	GPU       string `json:"gpu"`
 	RAM       string `json:"ram"`
@@ -12,6 +13,7 @@ type ComputerSpecs struct {
 	Headset   string `json:"headset"`
 	Mouse     string `json:"mouse"`
 	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
 }
 
 type ComputerStatus struct {

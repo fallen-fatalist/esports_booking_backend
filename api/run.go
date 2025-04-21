@@ -2,6 +2,11 @@ package api
 
 import (
 	"booking_api/internal/repository"
+	"booking_api/internal/repository/postgres"
+	"booking_api/internal/server"
+	httpserver "booking_api/internal/server/http"
+	"booking_api/internal/service"
+	"booking_api/internal/service/implementation"
 	"database/sql"
 	"fmt"
 	"log"
@@ -11,42 +16,62 @@ import (
 )
 
 var (
-	dbHost     string = os.Getenv("DB_HOST")
-	dbUser     string = os.Getenv("DB_USER")
-	dbPassword string = os.Getenv("DB_PASSWORD")
-	dbName     string = os.Getenv("DB_NAME")
-	dbPort     string = os.Getenv("DB_PORT")
-	db         *sql.DB
-	err        error
-	port       string
+	db   *sql.DB
+	err  error
+	port string
 )
 
 func Run() {
-	dsn := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", dbUser, dbPassword, dbHost, dbPort, dbName)
 
-	db, err = repository.OpenDB(dsn)
+	// Database connection
+	db, err := postgres.OpenDB()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	port = os.Getenv("PORT")
+	// Repositories init
+	var userRepository repository.UserRepository
+	var computerRepository repository.ComputerRepository
+	var bookingRepository repository.BookingRepository
+	var packageRepository repository.PackageRepository
+
+	userRepository, _ = postgres.NewUserRepository(db)
+	computerRepository, _ = postgres.NewComputerRepository(db)
+	bookingRepository, _ = postgres.NewBookingRepository(db)
+	packageRepository, _ = postgres.NewPackageRepository(db)
+
+	// Services init
+	var userService service.UserService
+	var computerService service.ComputerService
+	var bookingService service.BookingService
+	var packageService service.PackageService
+
+	userService, _ = implementation.NewUserService(userRepository)
+	computerService, _ = implementation.NewComputerService(computerRepository)
+	bookingService, _ = implementation.NewBookingService(bookingRepository)
+	packageService, _ = implementation.NewPackageService(packageRepository)
+	service, _ := service.NewService(
+		computerService,
+		userService,
+		bookingService,
+		packageService,
+	)
+
+	// Server init
+	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
 	}
 
-	mux := http.NewServeMux()
-	mux.Handle("/", http.HandlerFunc(Hello))
-	mux.Handle("/api/v1/computers/specs", http.HandlerFunc(ComputerSpecs))
-	mux.Handle("/api/v1/computers/statuses", http.HandlerFunc(ComputerStatuses))
-	mux.Handle("/api/v1/users", http.HandlerFunc(Users))
-	mux.Handle("/api/v1/packages", http.HandlerFunc(Packages))
-	mux.Handle("/api/v1/bookings/pending", http.HandlerFunc(PendingBookings))
-	mux.Handle("/api/v1/bookings/finished", http.HandlerFunc(FinishedBookings))
+	var app server.Server
+	var logger *slog.Logger = slog.New(slog.NewTextHandler(os.Stdout, nil))
+	app = httpserver.NewServer(
+		service,
+		logger,
+	)
 
-	// Middlewares
-	recoveredMux := recoverPanic(mux)
-	loggedMux := requestLogger(recoveredMux)
+	mux := app.Routes()
 
 	slog.Info("Starting server on: " + port + " port")
-	http.ListenAndServe(fmt.Sprintf(":%s", port), loggedMux)
+	http.ListenAndServe(fmt.Sprintf(":%s", port), mux)
 }
