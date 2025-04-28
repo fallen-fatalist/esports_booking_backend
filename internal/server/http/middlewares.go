@@ -24,7 +24,8 @@ func recoverPanic(next http.Handler) http.Handler {
 			if err := recover(); err != nil {
 				w.Header().Set("Connection", "close")
 				if err, ok := err.(error); ok {
-					http.Error(w, err.Error(), http.StatusInternalServerError)
+					slog.Error("Recovered panic", slog.Any("error", err))
+					http.Error(w, "Undefined error", http.StatusInternalServerError)
 				}
 			}
 		}()

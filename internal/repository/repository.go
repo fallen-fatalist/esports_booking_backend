@@ -43,12 +43,12 @@ type ComputerRepository interface {
 	GetByID(int64) (*entities.Computer, error)
 	Create(*entities.Computer) (int64, error)
 	Update(*entities.Computer) (int64, error)
-	Delete(int64) error
+	Delete(int64) (int64, error)
 }
 
 type BookingRepository interface {
 	GetAll() ([]*entities.Booking, error)
-	GetByID(int64) (*entities.Booking, error)
+	GetByID(int64) ([]*entities.Booking, error)
 	Create(booking *entities.Booking) (int64, error)
 	Update(booking *entities.Booking) (int64, error)
 	Delete(int64) error

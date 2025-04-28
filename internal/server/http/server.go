@@ -33,46 +33,20 @@ func NewServer(
 func (s *Server) Routes() http.Handler {
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/api/v1/computers", s.GetComputers)
-	mux.HandleFunc("/api/v1/users", s.GetUsers)
-	// mux.Handle("/api/v1/packages", s.GetAllPackages)
-	// mux.Handle("/api/v1/bookings/pending", http.HandlerFunc(PendingBookings))
-	// mux.Handle("/api/v1/bookings/finished", http.HandlerFunc(FinishedBookings))
+	mux.HandleFunc("/api/computers", s.HandleComputers)
+	mux.HandleFunc("/api/computers/{id}", s.HandleComputer)
+	mux.HandleFunc("/api/computers/status", s.HandleComputerStatuses)
+	mux.HandleFunc("/api/computers/{id}/status", s.HandleComputerStatus)
 
-	// Middlewares attach
-	// recoveredMux := recoverPanic(mux)
-	// router := requestLogger(recoveredMux)
-	return mux
-}
+	//mux.HandleFunc("/api/users", s.GetUsers)
+	// mux.Handle("/api/packages", s.GetAllPackages)
+	// mux.Handle("/api/bookings/pending", http.HandlerFunc(PendingBookings))
+	// mux.Handle("/api/bookings/finished", http.HandlerFunc(FinishedBookings))
 
-func (s *Server) GetComputers(w http.ResponseWriter, r *http.Request) {
-	computerSpecs, err := s.service.ComputerService.GetAllComputers()
-	if err != nil {
-		slog.Error("Error fetching computer specs:", err)
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(computerSpecs); err != nil {
-		slog.Error("Error encoding JSON:", err)
-		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
-	}
-}
-
-func (s *Server) GetComputerStatuses(w http.ResponseWriter, r *http.Request) {
-	computerStatuses, err := s.service.ComputerService.GetAllComputerStatuses()
-	if err != nil {
-		slog.Error("Error fetching computer statuses:", err)
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(computerStatuses); err != nil {
-		slog.Error("Error encoding JSON:", err)
-		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
-	}
+	/* Middlewares attach */
+	router := recoverPanic(mux)
+	router = requestLogger(router)
+	return router
 }
 
 func (s *Server) GetUsers(w http.ResponseWriter, r *http.Request) {
@@ -91,7 +65,7 @@ func (s *Server) GetUsers(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) Packages(w http.ResponseWriter, r *http.Request) {
-	packages, err := s.service.ComputerService.GetAllPackages()
+	packages, err := s.service.PackageService.GetAllPackages()
 	if err != nil {
 		slog.Error("Error fetching packages:", err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)

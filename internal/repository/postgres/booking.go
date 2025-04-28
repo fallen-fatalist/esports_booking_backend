@@ -21,7 +21,7 @@ func (r *BookingRepository) GetAll() ([]*entities.Booking, error) {
 	return nil, nil
 }
 
-func (r *BookingRepository) GetByID(int64) (*entities.Booking, error) {
+func (r *BookingRepository) GetByID(int64) ([]*entities.Booking, error) {
 	return nil, nil
 }
 

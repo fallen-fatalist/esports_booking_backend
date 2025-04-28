@@ -18,7 +18,7 @@ func NewComputerRepository(db *sql.DB) (*ComputerRepository, error) {
 }
 
 func (r *ComputerRepository) GetAll() ([]*entities.Computer, error) {
-	query := `
+	rows, err := r.db.Query(`
 		SELECT 
 			computer_id, 
 			status, 
@@ -26,68 +26,150 @@ func (r *ComputerRepository) GetAll() ([]*entities.Computer, error) {
 			gpu, 
 			ram, 
 			ssd, 
-			hdd, 
+			hdd,
 			monitor, 
 			keyboard, 
-			headset,
+			headset, 
 			mouse, 
+			mousepad,
 			created_at, 
 			updated_at
-		FROM computers 
-	`
-
-	rows, err := r.db.Query(query)
+		FROM computers
+	`)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var computers_specs []*entities.Computer
+	var computers []*entities.Computer
 
 	for rows.Next() {
-		var computer_specs *entities.Computer
-
-		err = rows.Scan(
-			&computer_specs.ID,
-			&computer_specs.CPU,
-			&computer_specs.GPU,
-			&computer_specs.RAM,
-			&computer_specs.SSD,
-			&computer_specs.HDD,
-			&computer_specs.Monitor,
-			&computer_specs.Keyboard,
-			&computer_specs.Headset,
-			&computer_specs.Mouse,
-			&computer_specs.CreatedAt,
+		var c entities.Computer
+		err := rows.Scan(
+			&c.ID,
+			&c.Status,
+			&c.CPU,
+			&c.GPU,
+			&c.RAM,
+			&c.SSD,
+			&c.HDD,
+			&c.Monitor,
+			&c.Keyboard,
+			&c.Headset,
+			&c.Mouse,
+			&c.Mousepad,
+			&c.CreatedAt,
+			&c.UpdatedAt,
 		)
-
 		if err != nil {
 			return nil, err
 		}
-
-		computers_specs = append(computers_specs, computer_specs)
+		computers = append(computers, &c)
 	}
+
 	if err = rows.Err(); err != nil {
 		return nil, err
 	}
 
-	return computers_specs, nil
+	return computers, nil
 }
 
-func (r *ComputerRepository) GetByID(int64) (*entities.Computer, error) {
-	return nil, nil
+func (r *ComputerRepository) GetByID(id int64) (*entities.Computer, error) {
+	res := r.db.QueryRow(`
+		SELECT 
+			computer_id, 
+			status, 
+			cpu, 
+			gpu, 
+			ram, 
+			ssd, 
+			hdd,
+			monitor, 
+			keyboard, 
+			headset, 
+			mouse, 
+			mousepad,
+			created_at, 
+			updated_at
+		FROM computers
+		WHERE computer_id = $1
+	`, id)
+	if res.Err() != nil {
+		return nil, res.Err()
+	}
+
+	var c entities.Computer
+	err := res.Scan(
+		&c.ID,
+		&c.Status,
+		&c.CPU,
+		&c.GPU,
+		&c.RAM,
+		&c.SSD,
+		&c.HDD,
+		&c.Monitor,
+		&c.Keyboard,
+		&c.Headset,
+		&c.Mouse,
+		&c.Mousepad,
+		&c.CreatedAt,
+		&c.UpdatedAt,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &c, nil
 }
 
-func (r *ComputerRepository) Create(*entities.Computer) (int64, error) {
-	return 0, nil
+func (r *ComputerRepository) Create(computer *entities.Computer) (int64, error) {
+	query := `
+		INSERT INTO computers 
+		(status, cpu, gpu, ram, ssd, hdd, monitor, keyboard, headset, mouse, mousepad, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, NOW(), NOW())
+		RETURNING computer_id
+	`
+
+	var id int64
+	err := r.db.QueryRow(
+		query,
+		computer.Status,
+		computer.CPU,
+		computer.GPU,
+		computer.RAM,
+		computer.SSD,
+		computer.HDD,
+		computer.Monitor,
+		computer.Keyboard,
+		computer.Headset,
+		computer.Mouse,
+		computer.Mousepad,
+	).Scan(&id)
+	if err != nil {
+		return 0, err
+	}
+
+	return id, nil
 }
 
 func (r *ComputerRepository) Update(computer *entities.Computer) (int64, error) {
 	return 0, nil
 }
 
-func (r *ComputerRepository) Delete(int64) error {
-	return nil
+func (r *ComputerRepository) Delete(id int64) (int64, error) {
+	query := `DELETE FROM computers WHERE computer_id = $1`
+
+	result, err := r.db.Exec(query, id)
+	if err != nil {
+		return 0, err
+	}
+
+	RowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+
+	return RowsAffected, nil
 }
 
 // func (r *ComputerRepository) GetAllComputerStatuses() ([]entities.ComputerStatus, error) {

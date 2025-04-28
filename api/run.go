@@ -28,6 +28,7 @@ func Run() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	slog.Info("Successfully connected to database")
 
 	// Repositories init
 	var userRepository repository.UserRepository

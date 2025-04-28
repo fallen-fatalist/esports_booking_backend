@@ -17,7 +17,7 @@ func NewPackageService(repository repository.PackageRepository) (*PackageService
 	return &PackageService{repository}, nil
 }
 
-func (s *PackageService) GetPackages() ([]*entities.Package, error) {
+func (s *PackageService) GetAllPackages() ([]*entities.Package, error) {
 	return nil, nil
 }
 

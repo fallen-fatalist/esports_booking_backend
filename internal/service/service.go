@@ -12,6 +12,42 @@ type Service struct {
 	PackageService  PackageService
 }
 
+type ComputerService interface {
+	GetAllComputers() ([]*entities.Computer, error)
+	GetComputer(id int64) (*entities.Computer, error)
+	CreateComputer(*entities.Computer) (int64, error)
+	DeleteComputer(id int64) error
+	GetAllComputerStatuses() ([]*entities.ComputerStatus, error)
+	GetComputerStatus(id int64) (*entities.ComputerStatus, error)
+}
+
+type UserService interface {
+	GetAllUsers() ([]*entities.User, error)
+	GetUser(int64) (*entities.User, error)
+	CreateUser(*entities.User) (int64, error)
+	//AuthUser()
+	//RegisterUser()
+	//FillBalance()
+
+}
+
+type BookingService interface {
+	GetAllBookings() ([]*entities.Booking, error)
+	GetComputerBookings(id int64) ([]*entities.Booking, error)
+	GetPendingBookings() ([]*entities.Booking, error)
+	GetFinishedBookings() ([]*entities.Booking, error)
+	GetComputersLeftOccupiedTime() ([]*ComputerOccupiedLeftTime, error)
+	GetComputerLeftOccupiedTime(id int64) (*ComputerOccupiedLeftTime, error)
+}
+
+type PackageService interface {
+	GetAllPackages() ([]*entities.Package, error)
+	GetPackage(id int64) (*entities.Package, error)
+	CreatePackage(*entities.Package) (int64, error)
+	UpdatePackage(*entities.Package) (int64, error)
+	DeletePackage(int64) error
+}
+
 func NewService(
 	ComputerService ComputerService,
 	UserService UserService,
@@ -33,28 +69,4 @@ func NewService(
 		BookingService:  BookingService,
 		PackageService:  PackageService,
 	}, nil
-}
-
-type ComputerService interface {
-	GetAllComputers() ([]*entities.Computer, error)
-	GetAllComputerStatuses() ([]*entities.ComputerStatus, error)
-	GetAllPackages() ([]*entities.Package, error)
-}
-
-type UserService interface {
-	GetAllUsers() ([]*entities.User, error)
-}
-
-type BookingService interface {
-	GetAllBookings() ([]*entities.Booking, error)
-	GetPendingBookings() ([]*entities.Booking, error)
-	GetFinishedBookings() ([]*entities.Booking, error)
-}
-
-type PackageService interface {
-	GetPackages() ([]*entities.Package, error)
-	GetPackage(int64) (*entities.Package, error)
-	CreatePackage(*entities.Package) (int64, error)
-	UpdatePackage(*entities.Package) (int64, error)
-	DeletePackage(int64) error
 }

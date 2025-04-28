@@ -15,8 +15,8 @@ CREATE TABLE computers (
     headset TEXT NOT NULL,
     mouse TEXT NOT NULL,
     mousepad TEXT NOT NULL,
-    created_at TIMESTAMP DEFAULT NOW()
-    updated_at TIMESTAMP DEFAULT NOW()
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 

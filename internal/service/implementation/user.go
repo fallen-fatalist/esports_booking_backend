@@ -3,6 +3,7 @@ package implementation
 import (
 	"booking_api/internal/entities"
 	"booking_api/internal/repository"
+	"booking_api/internal/service"
 	"log"
 )
 
@@ -19,4 +20,16 @@ func NewUserService(repository repository.UserRepository) (*UserService, error) 
 
 func (s *UserService) GetAllUsers() ([]*entities.User, error) {
 	return nil, nil
+}
+
+func (s *UserService) GetUser(id int64) (*entities.User, error) {
+	if err := service.ValidateID(id); err != nil {
+		return nil, err
+	}
+	
+	return nil, nil
+}
+
+func (s *UserService) CreateUser(user *entities.User) (int64, error) {
+	return 0, nil
 }
