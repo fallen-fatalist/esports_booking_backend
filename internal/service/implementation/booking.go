@@ -4,7 +4,10 @@ import (
 	"booking_api/internal/entities"
 	"booking_api/internal/repository"
 	"booking_api/internal/service"
+	"fmt"
 	"log"
+	"log/slog"
+	"time"
 )
 
 type BookingService struct {
@@ -19,14 +22,48 @@ func NewBookingService(repository repository.BookingRepository) (*BookingService
 }
 
 func (s *BookingService) GetAllBookings() ([]*entities.Booking, error) {
-	return s.repository.GetAll()
+	if bookings, err := s.repository.GetAll(); err != nil {
+		return nil, err
+	} else {
+		return bookings, nil
+	}
+
+}
+
+func (s *BookingService) CreateBooking(booking *entities.Booking) (int64, error) {
+	if err := booking.Validate(); err != nil {
+		return 0, err
+	}
+
+	if id, err := s.repository.Create(booking); err != nil {
+		slog.Error("Unhandled error creating booking:", err)
+		return 0, service.ErrUnhandledError
+	} else {
+		return id, nil
+	}
+
 }
 
 func (s *BookingService) GetComputerBookings(id int64) ([]*entities.Booking, error) {
-	if err := service.ValidateID(id); err != nil {
+	if err := entities.ValidateID(id); err != nil {
 		return nil, err
 	}
-	return s.repository.GetByID(id)
+
+	bookings, err := s.GetAllBookings()
+	if err != nil {
+		slog.Error("Unhandled Error fetching pending bookings:", err)
+		return nil, service.ErrUnhandledError
+	}
+
+	comp_bookings := make([]*entities.Booking, 0, len(bookings))
+
+	for _, booking := range bookings {
+		if booking.ComputerID == id {
+			comp_bookings = append(comp_bookings, booking)
+		}
+	}
+
+	return comp_bookings, nil
 }
 
 func (s *BookingService) GetPendingBookings() ([]*entities.Booking, error) {
@@ -37,10 +74,74 @@ func (s *BookingService) GetFinishedBookings() ([]*entities.Booking, error) {
 	return nil, nil
 }
 
-func (s *BookingService) GetComputersLeftOccupiedTime() ([]*service.ComputerOccupiedLeftTime, error) {
-	return nil, nil
+// TODO: Test
+func (s *BookingService) GetComputersLeftOccupiedTime() ([]*entities.ComputerOccupiedLeftTime, error) {
+	bookings, err := s.repository.GetPendingBookings()
+	if err != nil {
+		return nil, err
+	}
+
+	now := time.Now().UTC()
+
+	leftTimes := make([]*entities.ComputerOccupiedLeftTime, 0, len(bookings))
+
+	for _, booking := range bookings {
+		if booking.Status == "active" {
+			endTime, err := time.Parse(time.RFC3339, booking.EndTime)
+			if err != nil {
+				return nil, fmt.Errorf("invalid end_time format for booking %d: %w", booking.ID, err)
+			}
+
+			if endTime.After(now) {
+				leftDuration := endTime.Sub(now)
+				leftTimes = append(leftTimes, &entities.ComputerOccupiedLeftTime{
+					ComputerID:  booking.ComputerID,
+					LeftSeconds: int64(leftDuration.Seconds()),
+				})
+			} else {
+				leftTimes = append(leftTimes, &entities.ComputerOccupiedLeftTime{
+					ComputerID:  booking.ComputerID,
+					LeftSeconds: 0,
+				})
+			}
+		}
+	}
+
+	return leftTimes, nil
 }
 
-func (s *BookingService) GetComputerLeftOccupiedTime(id int64) (*service.ComputerOccupiedLeftTime, error) {
-	return nil, nil
+func (s *BookingService) GetComputerLeftOccupiedTime(id int64) (*entities.ComputerOccupiedLeftTime, error) {
+	bookings, err := s.GetComputerBookings(id)
+	if err != nil {
+		return nil, err
+	}
+
+	now := time.Now().UTC()
+
+	leftTime := entities.ComputerOccupiedLeftTime{
+		ComputerID:  id,
+		LeftSeconds: 0,
+	}
+
+	for _, booking := range bookings {
+		if booking.Status == "active" {
+			endTime, err := time.Parse(time.RFC3339, booking.EndTime)
+			if err != nil {
+				return nil, fmt.Errorf("invalid end_time format for booking %d: %w", booking.ID, err)
+			}
+
+			if endTime.After(now) {
+				leftDuration := endTime.Sub(now)
+				return &entities.ComputerOccupiedLeftTime{
+					ComputerID:  booking.ComputerID,
+					LeftSeconds: int64(leftDuration.Seconds()),
+				}, nil
+			} else {
+				return &leftTime, nil
+			}
+		}
+	}
+
+	// No active booking found
+	return &leftTime, nil
 }

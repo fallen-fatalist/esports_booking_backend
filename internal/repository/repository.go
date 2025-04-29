@@ -48,14 +48,13 @@ type ComputerRepository interface {
 
 type BookingRepository interface {
 	GetAll() ([]*entities.Booking, error)
-	GetByID(int64) ([]*entities.Booking, error)
+	GetByID(int64) (*entities.Booking, error)
 	Create(booking *entities.Booking) (int64, error)
 	Update(booking *entities.Booking) (int64, error)
 	Delete(int64) error
 
 	GetPendingBookings() ([]*entities.Booking, error)
 	GetFinishedBookings() ([]*entities.Booking, error)
-	RefreshStatus()
 }
 
 type PackageRepository interface {

@@ -1,4 +1,4 @@
-package service
+package entities
 
 import "errors"
 

@@ -6,14 +6,12 @@ import (
 	"booking_api/internal/service"
 	"database/sql"
 	"errors"
-	"fmt"
 	"log"
-	"strings"
+	"log/slog"
 )
 
 // Errors
 var (
-	ErrInvalidStatus    = errors.New("invalid status for computer provided")
 	ErrComputerNotFound = errors.New("computer does not exist")
 )
 
@@ -33,7 +31,7 @@ func (s *ComputerService) GetAllComputers() ([]*entities.Computer, error) {
 }
 
 func (s *ComputerService) GetComputer(id int64) (*entities.Computer, error) {
-	if err := service.ValidateID(id); err != nil {
+	if err := entities.ValidateID(id); err != nil {
 		return nil, err
 	}
 	comp, err := s.repository.GetByID(id)
@@ -47,14 +45,19 @@ func (s *ComputerService) GetComputer(id int64) (*entities.Computer, error) {
 }
 
 func (s *ComputerService) CreateComputer(computer *entities.Computer) (int64, error) {
-	if err := ValidateComputer(computer); err != nil {
+	if err := computer.Validate(); err != nil {
 		return 0, err
 	}
-	return s.repository.Create(computer)
+	if id, err := s.repository.Create(computer); err != nil {
+		slog.Error("Unhandled error creating computer:", err)
+		return 0, service.ErrUnhandledError
+	} else {
+		return id, nil
+	}
 }
 
 func (s *ComputerService) DeleteComputer(id int64) error {
-	if err := service.ValidateID(id); err != nil {
+	if err := entities.ValidateID(id); err != nil {
 		return err
 	}
 
@@ -86,7 +89,7 @@ func (s *ComputerService) GetAllComputerStatuses() ([]*entities.ComputerStatus, 
 }
 
 func (s *ComputerService) GetComputerStatus(id int64) (*entities.ComputerStatus, error) {
-	if err := service.ValidateID(id); err != nil {
+	if err := entities.ValidateID(id); err != nil {
 		return nil, err
 	}
 
@@ -105,45 +108,4 @@ func (s *ComputerService) GetComputerStatus(id int64) (*entities.ComputerStatus,
 	}
 
 	return status, nil
-}
-
-func ValidateComputer(computer *entities.Computer) error {
-
-	allowedStatuses := map[string]bool{
-		"available":    true,
-		"pending":      true,
-		"busy":         true,
-		"not working":  true,
-		"under repair": true,
-	}
-
-	// Validate Status
-	if !allowedStatuses[computer.Status] {
-		return ErrInvalidStatus
-	}
-
-	// Validate all other fields
-	fields := map[string]string{
-		"cpu":      computer.CPU,
-		"gpu":      computer.GPU,
-		"ram":      computer.RAM,
-		"ssd":      computer.SSD,
-		"hdd":      computer.HDD,
-		"monitor":  computer.Monitor,
-		"keyboard": computer.Keyboard,
-		"headset":  computer.Headset,
-		"mouse":    computer.Mouse,
-		"mousepad": computer.Mousepad,
-	}
-
-	for fieldName, value := range fields {
-		if strings.TrimSpace(value) == "" {
-			return fmt.Errorf("field '%s' must not be empty", fieldName)
-		}
-		if len(value) > 30 {
-			return fmt.Errorf("field '%s' must not exceed 30 characters", fieldName)
-		}
-	}
-
-	return nil
 }

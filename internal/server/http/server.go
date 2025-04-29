@@ -33,10 +33,15 @@ func NewServer(
 func (s *Server) Routes() http.Handler {
 	mux := http.NewServeMux()
 
+	/* Computers */
 	mux.HandleFunc("/api/computers", s.HandleComputers)
 	mux.HandleFunc("/api/computers/{id}", s.HandleComputer)
 	mux.HandleFunc("/api/computers/status", s.HandleComputerStatuses)
 	mux.HandleFunc("/api/computers/{id}/status", s.HandleComputerStatus)
+	mux.HandleFunc("/api/computers/{id}/bookings", s.HandleComputerBookings)
+
+	/* Bookings */
+	mux.HandleFunc("/api/bookings", s.HandleBookings)
 
 	//mux.HandleFunc("/api/users", s.GetUsers)
 	// mux.Handle("/api/packages", s.GetAllPackages)
