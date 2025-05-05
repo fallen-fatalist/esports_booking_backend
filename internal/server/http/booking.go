@@ -141,31 +141,132 @@ func (s *Server) HandleComputerBookings(w http.ResponseWriter, r *http.Request) 
 }
 
 func (s *Server) HandleFinishedBookings(w http.ResponseWriter, r *http.Request) {
-	bookings, err := s.service.BookingService.GetFinishedBookings()
-	if err != nil {
-		slog.Error("Error fetching finished bookings:", slog.Any("error", err))
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		return
-	}
+	switch r.Method {
+	case http.MethodGet:
+		bookings, err := s.service.BookingService.GetFinishedBookings()
+		if err != nil {
+			slog.Error("Error fetching finished bookings:", slog.Any("error", err))
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
+			return
+		}
 
-	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(bookings); err != nil {
-		slog.Error("Error encoding JSON:", err)
-		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+		w.Header().Set("Content-Type", "application/json")
+		if err := json.NewEncoder(w).Encode(bookings); err != nil {
+			slog.Error("Error encoding JSON:", err)
+			http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+		}
+	default:
+		w.Header().Set("Allow", "GET")
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}
 }
 
 func (s *Server) HandlePendingBookings(w http.ResponseWriter, r *http.Request) {
-	bookings, err := s.service.BookingService.GetPendingBookings()
-	if err != nil {
-		slog.Error("Error fetching pending bookings:", err)
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		return
-	}
+	switch r.Method {
+	case http.MethodGet:
+		bookings, err := s.service.BookingService.GetPendingBookings()
+		if err != nil {
+			slog.Error("Error fetching pending bookings:", slog.Any("error", err))
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
+			return
+		}
 
-	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(bookings); err != nil {
-		slog.Error("Error encoding JSON:", err)
-		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+		w.Header().Set("Content-Type", "application/json")
+		if err := json.NewEncoder(w).Encode(bookings); err != nil {
+			slog.Error("Error encoding JSON:", err)
+			http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+		}
+	default:
+		w.Header().Set("Allow", "GET")
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	}
+}
+func (s *Server) HandleActiveBookings(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		activeBookings, err := s.service.BookingService.GetActiveBookings()
+		if err != nil {
+			slog.Error("Error fetching active bookings:", slog.Any("error", err))
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		if err := json.NewEncoder(w).Encode(activeBookings); err != nil {
+			slog.Error("Error encoding JSON:", err)
+			http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+		}
+	default:
+		w.Header().Set("Allow", "GET")
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	}
+}
+
+func (s *Server) HandleCancelledBookings(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		cancelledBookings, err := s.service.BookingService.GetCancelledBookings()
+		if err != nil {
+			slog.Error("Error fetching cancelled bookings:", slog.Any("error", err))
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		if err := json.NewEncoder(w).Encode(cancelledBookings); err != nil {
+			slog.Error("Error encoding JSON:", err)
+			http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+		}
+	default:
+		w.Header().Set("Allow", "GET")
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	}
+}
+
+func (s *Server) HandleComputerLeftTime(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		idStr := r.PathValue("id")
+		id, err := strconv.ParseInt(idStr, 10, 64)
+		if err != nil {
+			http.Error(w, "Invalid computer ID", http.StatusBadRequest)
+			return
+		}
+		computerLeftTime, err := s.service.BookingService.GetComputerLeftOccupiedTime(id)
+		if err != nil {
+			slog.Error("Error fetching computer left time:", slog.Any("error", err))
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		if err := json.NewEncoder(w).Encode(computerLeftTime); err != nil {
+			slog.Error("Error encoding JSON:", err)
+			http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+		}
+	default:
+		w.Header().Set("Allow", "GET")
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	}
+}
+
+func (s *Server) HandleComputersLeftTime(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		computersLeftTime, err := s.service.BookingService.GetComputersLeftOccupiedTime()
+		if err != nil {
+			slog.Error("Error fetching computers left time:", slog.Any("error", err))
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		if err := json.NewEncoder(w).Encode(computersLeftTime); err != nil {
+			slog.Error("Error encoding JSON:", err)
+			http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+		}
+	default:
+		w.Header().Set("Allow", "GET")
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}
 }

@@ -52,9 +52,9 @@ type BookingRepository interface {
 	Create(booking *entities.Booking) (int64, error)
 	Update(booking *entities.Booking) (int64, error)
 	Delete(int64) error
-
-	GetPendingBookings() ([]*entities.Booking, error)
-	GetFinishedBookings() ([]*entities.Booking, error)
+	/* Very bad and stupid solution must be optimized to priority queue */
+	RefreshStatus()
+	CreateRandomActiveBookingEndingSoon()
 }
 
 type PackageRepository interface {

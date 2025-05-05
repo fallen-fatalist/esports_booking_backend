@@ -36,10 +36,14 @@ type BookingService interface {
 	GetAllBookings() ([]*entities.Booking, error)
 	CreateBooking(*entities.Booking) (int64, error)
 	GetComputerBookings(id int64) ([]*entities.Booking, error)
+	GetActiveBookings() ([]*entities.Booking, error)
 	GetPendingBookings() ([]*entities.Booking, error)
 	GetFinishedBookings() ([]*entities.Booking, error)
+	GetCancelledBookings() ([]*entities.Booking, error)
 	GetComputersLeftOccupiedTime() ([]*entities.ComputerOccupiedLeftTime, error)
 	GetComputerLeftOccupiedTime(id int64) (*entities.ComputerOccupiedLeftTime, error)
+	RefreshBookings()
+	CreateRandomActiveBookingEndingSoon()
 }
 
 type PackageService interface {

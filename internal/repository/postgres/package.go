@@ -10,11 +10,10 @@ type PackageRepository struct {
 }
 
 func NewPackageRepository(db *sql.DB) (*PackageRepository, error) {
-	if db != nil {
-		return &PackageRepository{db}, nil
+	if db == nil {
+		panic("Empty databaase provided to package repository")
 	}
-
-	panic("Empty databaase provided to package repository")
+	return &PackageRepository{db}, nil
 }
 func (r *PackageRepository) GetAll() ([]*entities.Package, error) {
 	return nil, nil

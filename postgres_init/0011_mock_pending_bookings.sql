@@ -1,4 +1,4 @@
-INSERT INTO pending_bookings (user_id, computer_id, package_id, start_time, end_time, status)
+INSERT INTO bookings (user_id, computer_id, package_id, start_time, end_time, status)
 VALUES
     (1, 3, 1, '2025-02-22 10:00:00', '2025-02-22 11:00:00', 'pending'),
     (2, 5, 2, '2025-02-22 12:00:00', '2025-02-22 14:00:00', 'pending'),
@@ -20,3 +20,59 @@ VALUES
     (18, 16, 4, '2025-02-24 18:30:00', '2025-02-24 23:30:00',  'pending'),
     (19, 17, 6, '2025-02-24 22:00:00', '2025-02-25 06:00:00',  'pending'),
     (20, 19, 7, '2025-02-25 06:30:00', '2025-02-25 12:00:00',  'pending');
+
+INSERT INTO bookings (user_id, computer_id, package_id, start_time, end_time, status, created_at)
+VALUES
+    (10, 5, 1, '2025-02-10 14:00:00', '2025-02-10 15:00:00', 'finished', '2025-02-10 14:00:00'),
+    (12, 8, 2, '2025-02-11 10:00:00', '2025-02-11 12:00:00',  'finished', '2025-02-11 10:00:00'),
+    (15, 12, 3, '2025-02-12 16:00:00', '2025-02-12 19:00:00', 'finished', '2025-02-12 16:00:00'),
+    (18, 20, 4, '2025-02-13 09:00:00', '2025-02-13 14:00:00',  'finished', '2025-02-13 09:00:00'),
+    (20, 25, 5, '2025-02-14 08:30:00', '2025-02-14 20:00:00',  'finished', '2025-02-14 08:30:00'),
+    (25, 30, 6, '2025-02-15 22:00:00', '2025-02-16 06:00:00',  'finished', '2025-02-15 22:00:00'),
+    (28, 35, 7, '2025-02-16 06:30:00', '2025-02-16 12:00:00',  'finished', '2025-02-16 06:30:00'),
+    (30, 4, 1, '2025-02-17 11:00:00', '2025-02-17 12:00:00',  'finished', '2025-02-17 11:00:00'),
+    (35, 9, 2, '2025-02-18 14:00:00', '2025-02-18 16:00:00',  'cancelled', '2025-02-18 14:00:00'),
+    (38, 15, 3, '2025-02-19 17:00:00', '2025-02-19 20:00:00',  'finished', '2025-02-19 17:00:00'),
+    (40, 22, 4, '2025-02-20 12:30:00', '2025-02-20 17:30:00',  'finished', '2025-02-20 12:30:00'),
+    (43, 26, 6, '2025-02-21 23:00:00', '2025-02-22 06:00:00',  'cancelled', '2025-02-21 23:00:00'),
+    (47, 29, 5, '2025-02-22 09:00:00', '2025-02-22 20:00:00',  'finished', '2025-02-22 09:00:00'),
+    (50, 33, 7, '2025-02-23 07:30:00', '2025-02-23 12:00:00',  'finished', '2025-02-23 07:30:00'),
+    (53, 38, 1, '2025-02-24 10:00:00', '2025-02-24 11:00:00',  'cancelled', '2025-02-24 10:00:00'),
+    (51, 7, 2, '2025-02-25 13:00:00', '2025-02-25 15:00:00',  'finished', '2025-02-25 13:00:00'),
+    (5, 14, 3, '2025-02-26 16:00:00', '2025-02-26 19:00:00',  'finished', '2025-02-26 16:00:00'),
+    (6, 21, 4, '2025-02-27 18:00:00', '2025-02-27 23:00:00',  'finished', '2025-02-27 18:00:00');
+
+
+CREATE OR REPLACE FUNCTION create_bookings_finishing_soon()
+RETURNS void AS $$
+DECLARE
+    i INT;
+    uid INT;
+    cid INT;
+    pid INT;
+    start_ts TIMESTAMPTZ;
+    end_ts TIMESTAMPTZ;
+BEGIN
+    FOR i IN 1..10 LOOP
+        -- Random IDs (adjust bounds to match your actual user/computer/package IDs)
+        uid := (random() * 49)::INT + 1;
+        cid := (random() * 40)::INT + 1;
+        pid := (random() * 7)::INT + 1;
+
+        -- Start time is now minus 10–50 minutes
+        start_ts := NOW() - ((random() * 40 + 10)::INT || ' minutes')::INTERVAL;
+        -- End time is now plus 0–10 minutes
+        end_ts := NOW() + ((random() * 10 + 1)::INT || ' minutes')::INTERVAL;
+
+        -- Ensure start is before end
+        IF end_ts <= start_ts THEN
+            end_ts := start_ts + interval '5 minutes';
+        END IF;
+
+        INSERT INTO bookings (user_id, computer_id, package_id, start_time, end_time, status)
+        VALUES (uid, cid, pid, start_ts, end_ts, 'active');
+    END LOOP;
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT create_bookings_finishing_soon();

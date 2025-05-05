@@ -41,7 +41,6 @@ func (s *BookingService) CreateBooking(booking *entities.Booking) (int64, error)
 	} else {
 		return id, nil
 	}
-
 }
 
 func (s *BookingService) GetComputerBookings(id int64) ([]*entities.Booking, error) {
@@ -66,17 +65,146 @@ func (s *BookingService) GetComputerBookings(id int64) ([]*entities.Booking, err
 	return comp_bookings, nil
 }
 
+func (s *BookingService) GetActiveBookings() ([]*entities.Booking, error) {
+	bookings, err := s.repository.GetAll()
+	if err != nil {
+		return nil, err
+	}
+
+	pending_bookings := make([]*entities.Booking, 0, len(bookings))
+
+	for _, booking := range bookings {
+		startTime, err := time.Parse(time.RFC3339, booking.StartTime)
+		if err != nil {
+			return nil, fmt.Errorf("invalid start_time: %w", err)
+		}
+		endTime, err := time.Parse(time.RFC3339, booking.EndTime)
+		if err != nil {
+			return nil, fmt.Errorf("invalid end_time: %w", err)
+		}
+
+		if booking.Status == "active" {
+			pending_bookings = append(pending_bookings, &entities.Booking{
+				ID:         booking.ID,
+				UserID:     booking.UserID,
+				ComputerID: booking.ComputerID,
+				PackageID:  booking.PackageID,
+				StartTime:  startTime.Format(time.RFC3339),
+				EndTime:    endTime.Format(time.RFC3339),
+				Status:     booking.Status,
+				CreatedAt:  booking.CreatedAt,
+			})
+		}
+	}
+	return pending_bookings, nil
+}
+
 func (s *BookingService) GetPendingBookings() ([]*entities.Booking, error) {
-	return nil, nil
+	bookings, err := s.repository.GetAll()
+	if err != nil {
+		return nil, err
+	}
+
+	pending_bookings := make([]*entities.Booking, 0, len(bookings))
+
+	for _, booking := range bookings {
+		startTime, err := time.Parse(time.RFC3339, booking.StartTime)
+		if err != nil {
+			return nil, fmt.Errorf("invalid start_time: %w", err)
+		}
+		endTime, err := time.Parse(time.RFC3339, booking.EndTime)
+		if err != nil {
+			return nil, fmt.Errorf("invalid end_time: %w", err)
+		}
+
+		if booking.Status == "pending" {
+			pending_bookings = append(pending_bookings, &entities.Booking{
+				ID:         booking.ID,
+				UserID:     booking.UserID,
+				ComputerID: booking.ComputerID,
+				PackageID:  booking.PackageID,
+				StartTime:  startTime.Format(time.RFC3339),
+				EndTime:    endTime.Format(time.RFC3339),
+				Status:     booking.Status,
+				CreatedAt:  booking.CreatedAt,
+			})
+		}
+	}
+	return pending_bookings, nil
 }
 
 func (s *BookingService) GetFinishedBookings() ([]*entities.Booking, error) {
-	return nil, nil
+	bookings, err := s.repository.GetAll()
+	if err != nil {
+		return nil, err
+	}
+
+	finished_bookings := make([]*entities.Booking, 0, len(bookings))
+
+	for _, booking := range bookings {
+		startTime, err := time.Parse(time.RFC3339, booking.StartTime)
+		if err != nil {
+			return nil, fmt.Errorf("invalid start_time: %w", err)
+		}
+		endTime, err := time.Parse(time.RFC3339, booking.EndTime)
+		if err != nil {
+			return nil, fmt.Errorf("invalid end_time: %w", err)
+		}
+
+		if booking.Status == "finished" {
+			finished_bookings = append(finished_bookings, &entities.Booking{
+				ID:         booking.ID,
+				UserID:     booking.UserID,
+				ComputerID: booking.ComputerID,
+				PackageID:  booking.PackageID,
+				StartTime:  startTime.Format(time.RFC3339),
+				EndTime:    endTime.Format(time.RFC3339),
+				Status:     booking.Status,
+				CreatedAt:  booking.CreatedAt,
+			})
+		}
+	}
+	return finished_bookings, nil
+}
+
+func (s *BookingService) GetCancelledBookings() ([]*entities.Booking, error) {
+	bookings, err := s.repository.GetAll()
+	if err != nil {
+		return nil, err
+	}
+
+	cancelled_bookings := make([]*entities.Booking, 0, len(bookings))
+
+	for _, booking := range bookings {
+		startTime, err := time.Parse(time.RFC3339, booking.StartTime)
+		if err != nil {
+			return nil, fmt.Errorf("invalid start_time: %w", err)
+		}
+		endTime, err := time.Parse(time.RFC3339, booking.EndTime)
+		if err != nil {
+			return nil, fmt.Errorf("invalid end_time: %w", err)
+		}
+
+		if booking.Status == "cancelled" {
+			cancelled_bookings = append(cancelled_bookings, &entities.Booking{
+				ID:         booking.ID,
+				UserID:     booking.UserID,
+				ComputerID: booking.ComputerID,
+				PackageID:  booking.PackageID,
+				StartTime:  startTime.Format(time.RFC3339),
+				EndTime:    endTime.Format(time.RFC3339),
+				Status:     booking.Status,
+				CreatedAt:  booking.CreatedAt,
+			})
+		}
+	}
+	return cancelled_bookings, nil
+
 }
 
 // TODO: Test
 func (s *BookingService) GetComputersLeftOccupiedTime() ([]*entities.ComputerOccupiedLeftTime, error) {
-	bookings, err := s.repository.GetPendingBookings()
+	bookings, err := s.repository.GetAll()
 	if err != nil {
 		return nil, err
 	}
@@ -99,9 +227,15 @@ func (s *BookingService) GetComputersLeftOccupiedTime() ([]*entities.ComputerOcc
 					LeftSeconds: int64(leftDuration.Seconds()),
 				})
 			} else {
-				leftTimes = append(leftTimes, &entities.ComputerOccupiedLeftTime{
-					ComputerID:  booking.ComputerID,
-					LeftSeconds: 0,
+				s.repository.Update(&entities.Booking{
+					ID:         booking.ID,
+					UserID:     booking.UserID,
+					ComputerID: booking.ComputerID,
+					PackageID:  booking.PackageID,
+					StartTime:  booking.StartTime,
+					EndTime:    booking.EndTime,
+					Status:     "finished",
+					CreatedAt:  booking.CreatedAt,
 				})
 			}
 		}
@@ -144,4 +278,12 @@ func (s *BookingService) GetComputerLeftOccupiedTime(id int64) (*entities.Comput
 
 	// No active booking found
 	return &leftTime, nil
+}
+
+func (s *BookingService) RefreshBookings() {
+	s.repository.RefreshStatus()
+}
+
+func (s *BookingService) CreateRandomActiveBookingEndingSoon() {
+	s.repository.CreateRandomActiveBookingEndingSoon()
 }

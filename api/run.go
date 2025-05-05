@@ -13,6 +13,7 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"time"
 )
 
 var (
@@ -71,8 +72,35 @@ func Run() {
 		logger,
 	)
 
+	refresherTicker := time.NewTicker(1 * time.Minute)
+	defer refresherTicker.Stop()
+
+	go refresher(refresherTicker, service.BookingService)
+
+	creatorTicker := time.NewTicker(10 * time.Minute)
+	defer creatorTicker.Stop()
+
+	for range 10 {
+		service.BookingService.CreateRandomActiveBookingEndingSoon()
+	}
+	go activeBookingCreator(creatorTicker, service.BookingService)
+
 	mux := app.Routes()
 
 	slog.Info("Starting server on: " + port + " port")
-	http.ListenAndServe(fmt.Sprintf(":%s", port), mux)
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), mux))
+}
+
+func refresher(ticker *time.Ticker, service service.BookingService) {
+	for range ticker.C {
+		service.RefreshBookings()
+	}
+}
+
+func activeBookingCreator(ticker *time.Ticker, service service.BookingService) {
+	for range ticker.C {
+		for range 10 {
+			service.CreateRandomActiveBookingEndingSoon()
+		}
+	}
 }
