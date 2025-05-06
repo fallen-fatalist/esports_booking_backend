@@ -6,7 +6,11 @@ import (
 
 	"log/slog"
 
-	"booking_api/internal/service"
+	"esports_club_booking/internal/service"
+
+	_ "esports_club_booking/docs"
+
+	httpSwagger "github.com/swaggo/http-swagger"
 )
 
 type Server struct {
@@ -52,6 +56,9 @@ func (s *Server) Routes() http.Handler {
 	// mux.Handle("/api/packages", s.GetAllPackages)
 	// mux.Handle("/api/bookings/pending", http.HandlerFunc(PendingBookings))
 	// mux.Handle("/api/bookings/finished", http.HandlerFunc(FinishedBookings))
+
+	/* Swagger */
+	mux.HandleFunc("/api/docs/", httpSwagger.WrapHandler)
 
 	/* Middlewares attach */
 	router := recoverPanic(mux)

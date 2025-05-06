@@ -11,7 +11,7 @@ type Booking struct {
 	ID         int64  `json:"id,omitempty"`
 	UserID     int64  `json:"user_id"`
 	ComputerID int64  `json:"computer_id"`
-	PackageID  int64  `json:"package"`
+	PackageID  int64  `json:"package_id"`
 	StartTime  string `json:"start_time"`
 	EndTime    string `json:"end_time"`
 	Status     string `json:"status"`

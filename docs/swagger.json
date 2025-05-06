@@ -1,0 +1,701 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "API for Esports Club Reservation system",
+        "title": "Esports Club Booking API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/api",
+    "paths": {
+        "/api/bookings": {
+            "get": {
+                "description": "Returns a list of bookings with various statuses",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Bookings"
+                ],
+                "summary": "Get all bookings with time format \"2006-01-02T15:04:05Z07:00\"",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/entities.Booking"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/server.JSONAnswer"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Creates a new booking with the given details",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Bookings"
+                ],
+                "summary": "Create a new booking",
+                "parameters": [
+                    {
+                        "description": "Booking details",
+                        "name": "booking",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entities.Booking"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Booking created successfully",
+                        "schema": {
+                            "$ref": "#/definitions/server.JSONAnswer"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request body",
+                        "schema": {
+                            "$ref": "#/definitions/server.JSONAnswer"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/server.JSONAnswer"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/bookings/active": {
+            "get": {
+                "description": "Returns a list of active bookings",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Bookings"
+                ],
+                "summary": "Get active bookings with time format \"2006-01-02T15:04:05Z07:00\"",
+                "responses": {
+                    "200": {
+                        "description": "List of active bookings",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/entities.Booking"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/server.JSONAnswer"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/bookings/cancelled": {
+            "get": {
+                "description": "Returns a list of cancelled bookings",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Bookings"
+                ],
+                "summary": "Get cancelled bookings with time format \"2006-01-02T15:04:05Z07:00\"",
+                "responses": {
+                    "200": {
+                        "description": "List of cancelled bookings",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/entities.Booking"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/server.JSONAnswer"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/bookings/computers-left-time": {
+            "get": {
+                "description": "Returns a list of computers left time",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Bookings"
+                ],
+                "summary": "Get computers left time in seconds",
+                "responses": {
+                    "200": {
+                        "description": "List of computers left time",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/entities.ComputerOccupiedLeftTime"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/server.JSONAnswer"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/bookings/finished": {
+            "get": {
+                "description": "Returns a list of finished bookings",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Bookings"
+                ],
+                "summary": "Get finished bookings with time format \"2006-01-02T15:04:05Z07:00\"",
+                "responses": {
+                    "200": {
+                        "description": "List of finished bookings",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/entities.Booking"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/server.JSONAnswer"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/bookings/pending": {
+            "get": {
+                "description": "Returns a list of pending bookings",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Bookings"
+                ],
+                "summary": "Get pending bookings with time format \"2006-01-02T15:04:05Z07:00\"",
+                "responses": {
+                    "200": {
+                        "description": "List of pending bookings",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/entities.Booking"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/server.JSONAnswer"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/bookings/{id}": {
+            "get": {
+                "description": "Returns a list of bookings for the specified computer ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Bookings"
+                ],
+                "summary": "Get bookings for a specific computer with time format \"2006-01-02T15:04:05Z07:00\"",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Computer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of bookings for the computer",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/entities.Booking"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid computer ID",
+                        "schema": {
+                            "$ref": "#/definitions/server.JSONAnswer"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/server.JSONAnswer"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/bookings/{id}/left": {
+            "get": {
+                "description": "Returns the left time for the specified computer ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Bookings"
+                ],
+                "summary": "Get the left time for a specific computer in seconds",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Computer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Left time for the computer",
+                        "schema": {
+                            "$ref": "#/definitions/entities.ComputerOccupiedLeftTime"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid computer ID",
+                        "schema": {
+                            "$ref": "#/definitions/server.JSONAnswer"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/server.JSONAnswer"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/computers": {
+            "get": {
+                "description": "Returns a list of all computers",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Computers"
+                ],
+                "summary": "Get all computers",
+                "responses": {
+                    "200": {
+                        "description": "List of computers",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/entities.Computer"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/server.JSONAnswer"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Creates a new computer",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Computers"
+                ],
+                "summary": "Create a new computer",
+                "parameters": [
+                    {
+                        "description": "Computer details",
+                        "name": "computer",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entities.Computer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Computer created successfully",
+                        "schema": {
+                            "$ref": "#/definitions/server.JSONAnswer"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request body",
+                        "schema": {
+                            "$ref": "#/definitions/server.JSONAnswer"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/server.JSONAnswer"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/computers/statuses": {
+            "get": {
+                "description": "Returns a list of all computer statuses",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Computers"
+                ],
+                "summary": "Get all computer statuses",
+                "responses": {
+                    "200": {
+                        "description": "List of computer statuses",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/entities.ComputerStatus"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/server.JSONAnswer"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/computers/{id}": {
+            "get": {
+                "description": "Returns a specific computer by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Computers"
+                ],
+                "summary": "Get a specific computer",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Computer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Computer details",
+                        "schema": {
+                            "$ref": "#/definitions/entities.Computer"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid computer ID",
+                        "schema": {
+                            "$ref": "#/definitions/server.JSONAnswer"
+                        }
+                    },
+                    "404": {
+                        "description": "Computer not found",
+                        "schema": {
+                            "$ref": "#/definitions/server.JSONAnswer"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/server.JSONAnswer"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Deletes a specific computer by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Computers"
+                ],
+                "summary": "Delete a specific computer",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Computer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Computer deleted successfully",
+                        "schema": {
+                            "$ref": "#/definitions/server.JSONAnswer"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid computer ID",
+                        "schema": {
+                            "$ref": "#/definitions/server.JSONAnswer"
+                        }
+                    },
+                    "404": {
+                        "description": "Computer not found",
+                        "schema": {
+                            "$ref": "#/definitions/server.JSONAnswer"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/server.JSONAnswer"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/computers/{id}/status": {
+            "get": {
+                "description": "Returns the status of the specified computer ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Computers"
+                ],
+                "summary": "Get the status of a specific computer",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Computer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Computer status",
+                        "schema": {
+                            "$ref": "#/definitions/entities.ComputerStatus"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid computer ID",
+                        "schema": {
+                            "$ref": "#/definitions/server.JSONAnswer"
+                        }
+                    },
+                    "404": {
+                        "description": "Computer not found",
+                        "schema": {
+                            "$ref": "#/definitions/server.JSONAnswer"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/server.JSONAnswer"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "entities.Booking": {
+            "type": "object",
+            "properties": {
+                "computer_id": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "end_time": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "package_id": {
+                    "type": "integer"
+                },
+                "start_time": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "entities.Computer": {
+            "type": "object",
+            "properties": {
+                "cpu": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "gpu": {
+                    "type": "string"
+                },
+                "hdd": {
+                    "type": "string"
+                },
+                "headset": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "keyboard": {
+                    "type": "string"
+                },
+                "monitor": {
+                    "type": "string"
+                },
+                "mouse": {
+                    "type": "string"
+                },
+                "mousepad": {
+                    "type": "string"
+                },
+                "ram": {
+                    "type": "string"
+                },
+                "ssd": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "entities.ComputerOccupiedLeftTime": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "left_time": {
+                    "type": "integer"
+                }
+            }
+        },
+        "entities.ComputerStatus": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "server.JSONAnswer": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

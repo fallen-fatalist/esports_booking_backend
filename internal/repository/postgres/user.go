@@ -1,7 +1,7 @@
 package postgres
 
 import (
-	"booking_api/internal/entities"
+	"esports_club_booking/internal/entities"
 	"database/sql"
 )
 

@@ -1,13 +1,13 @@
 package api
 
 import (
-	"booking_api/internal/repository"
-	"booking_api/internal/repository/postgres"
-	"booking_api/internal/server"
-	httpserver "booking_api/internal/server/http"
-	"booking_api/internal/service"
-	"booking_api/internal/service/implementation"
 	"database/sql"
+	"esports_club_booking/internal/repository"
+	"esports_club_booking/internal/repository/postgres"
+	"esports_club_booking/internal/server"
+	httpserver "esports_club_booking/internal/server/http"
+	"esports_club_booking/internal/service"
+	"esports_club_booking/internal/service/implementation"
 	"fmt"
 	"log"
 	"log/slog"
@@ -72,6 +72,15 @@ func Run() {
 		logger,
 	)
 
+	turnOnTimers(*service)
+
+	mux := app.Routes()
+
+	slog.Info("Starting server on: " + port + " port")
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), mux))
+}
+
+func turnOnTimers(service service.Service) {
 	refresherTicker := time.NewTicker(1 * time.Minute)
 	defer refresherTicker.Stop()
 
@@ -81,14 +90,11 @@ func Run() {
 	defer creatorTicker.Stop()
 
 	for range 10 {
-		service.BookingService.CreateRandomActiveBookingEndingSoon()
+		service.BookingService.GenerateBooking()
 	}
-	go activeBookingCreator(creatorTicker, service.BookingService)
 
-	mux := app.Routes()
+	go bookingCreator(creatorTicker, service.BookingService)
 
-	slog.Info("Starting server on: " + port + " port")
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), mux))
 }
 
 func refresher(ticker *time.Ticker, service service.BookingService) {
@@ -97,10 +103,10 @@ func refresher(ticker *time.Ticker, service service.BookingService) {
 	}
 }
 
-func activeBookingCreator(ticker *time.Ticker, service service.BookingService) {
+func bookingCreator(ticker *time.Ticker, service service.BookingService) {
 	for range ticker.C {
 		for range 10 {
-			service.CreateRandomActiveBookingEndingSoon()
+			service.GenerateBooking()
 		}
 	}
 }

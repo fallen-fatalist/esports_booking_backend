@@ -1,8 +1,8 @@
 package postgres
 
 import (
-	"booking_api/internal/entities"
 	"database/sql"
+	"esports_club_booking/internal/entities"
 	"fmt"
 	"log/slog"
 	"math/rand"
@@ -242,32 +242,31 @@ func (r *BookingRepository) RefreshStatus() {
 
 }
 
-func (r *BookingRepository) CreateRandomActiveBookingEndingSoon() {
+func (r *BookingRepository) GenerateBooking() {
 	now := time.Now().UTC()
 
-	// Random: booking starts in the past few minutes, ends in the next hour
-	startOffset := time.Duration(-rand.Intn(50)) * time.Minute // up to 50 minutes ago
-	endOffset := time.Duration(rand.Intn(60)) * time.Minute    // up to 60 minutes from now
+	// Booking can start up to 50 minutes in the past or 50 minutes in the future
+	startOffset := time.Duration(rand.Intn(100)-50) * time.Minute // [-50, +50] minutes
 	startTime := now.Add(startOffset)
-	endTime := now.Add(endOffset)
+	endTime := startTime.Add(time.Duration(10+rand.Intn(50)) * time.Minute) // duration: 10–60 min
 
-	// Ensure valid ordering
-	if endTime.Before(startTime) {
-		endTime = startTime.Add(10 * time.Minute) // fallback: ensure 10-minute duration
+	// Determine booking status
+	status := "active"
+	if startTime.After(now) {
+		status = "pending"
 	}
 
-	// Random IDs (assuming ranges are valid in DB)
-	userID := rand.Intn(49) + 1     // e.g. 1–20
-	computerID := rand.Intn(40) + 1 // e.g. 1–20
-	packageID := rand.Intn(7) + 1   // e.g. 1–10
+	// Random IDs
+	userID := rand.Intn(49) + 1     // e.g. 1–49
+	computerID := rand.Intn(40) + 1 // e.g. 1–40
+	packageID := rand.Intn(7) + 1   // e.g. 1–7
 
 	_, err := r.db.Exec(`
-			INSERT INTO bookings (user_id, computer_id, package_id, start_time, end_time, status)
-			VALUES ($1, $2, $3, $4, $5, 'active')
-		`, userID, computerID, packageID, startTime, endTime)
+		INSERT INTO bookings (user_id, computer_id, package_id, start_time, end_time, status)
+		VALUES ($1, $2, $3, $4, $5, $6)
+	`, userID, computerID, packageID, startTime, endTime, status)
 
 	if err != nil {
-		slog.Error("error inserting random active booking: %v", err)
+		slog.Error("error inserting booking: %v", err)
 	}
-
 }

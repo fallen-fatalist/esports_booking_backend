@@ -1,8 +1,8 @@
 package implementation
 
 import (
-	"booking_api/internal/entities"
-	"booking_api/internal/repository"
+	"esports_club_booking/internal/entities"
+	"esports_club_booking/internal/repository"
 	"log"
 )
 

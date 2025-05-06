@@ -1,8 +1,8 @@
 package service
 
 import (
-	"booking_api/internal/entities"
 	"errors"
+	"esports_club_booking/internal/entities"
 	"log"
 )
 
@@ -43,7 +43,7 @@ type BookingService interface {
 	GetComputersLeftOccupiedTime() ([]*entities.ComputerOccupiedLeftTime, error)
 	GetComputerLeftOccupiedTime(id int64) (*entities.ComputerOccupiedLeftTime, error)
 	RefreshBookings()
-	CreateRandomActiveBookingEndingSoon()
+	GenerateBooking()
 }
 
 type PackageService interface {

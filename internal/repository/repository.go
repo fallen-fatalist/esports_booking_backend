@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"booking_api/internal/entities"
+	"esports_club_booking/internal/entities"
 )
 
 type Repository struct {
@@ -54,7 +54,7 @@ type BookingRepository interface {
 	Delete(int64) error
 	/* Very bad and stupid solution must be optimized to priority queue */
 	RefreshStatus()
-	CreateRandomActiveBookingEndingSoon()
+	GenerateBooking()
 }
 
 type PackageRepository interface {
