@@ -35,6 +35,8 @@ func (s *BookingService) CreateBooking(booking *entities.Booking) (int64, error)
 		return 0, err
 	}
 
+	booking.Status = "pending"
+
 	if id, err := s.repository.Create(booking); err != nil {
 		slog.Error("Unhandled error creating booking:", err)
 		return 0, service.ErrUnhandledError

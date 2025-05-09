@@ -112,26 +112,12 @@ func (r *BookingRepository) Create(booking *entities.Booking) (int64, error) {
 	var query string
 	var id int64
 
-	switch booking.Status {
-	case "pending", "active":
-		query = `
-			INSERT INTO pending_bookings 
-			(user_id, computer_id, package_id, start_time, end_time, status, created_at)
-			VALUES ($1, $2, $3, $4, $5, $6, NOW())
-			RETURNING booking_id
-		`
-
-	case "finished", "cancelled":
-		query = `
-			INSERT INTO finished_bookings 
-			(user_id, computer_id, package_id, start_time, end_time, status, created_at)
-			VALUES ($1, $2, $3, $4, $5, $6, NOW())
-			RETURNING booking_id
-		`
-
-	default:
-		return 0, fmt.Errorf("invalid status: %s", booking.Status)
-	}
+	query = `
+		INSERT INTO bookings 
+		(user_id, computer_id, package_id, start_time, end_time, status, created_at)
+		VALUES ($1, $2, $3, $4, $5, $6, NOW())
+		RETURNING booking_id
+	`
 
 	err = r.db.QueryRow(
 		query,

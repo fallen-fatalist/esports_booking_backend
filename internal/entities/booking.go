@@ -14,7 +14,7 @@ type Booking struct {
 	PackageID  int64  `json:"package_id"`
 	StartTime  string `json:"start_time"`
 	EndTime    string `json:"end_time"`
-	Status     string `json:"status"`
+	Status     string `json:"status,omitempty"`
 	CreatedAt  string `json:"created_at,omitempty"`
 }
 
