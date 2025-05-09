@@ -11,10 +11,13 @@ clean:
 	rm bin/*
 
 up:
-	docker-compose -f docker/docker-compose.yaml up -d
+	docker-compose -f deploy/docker-compose.yaml up -d
+
+rebuild: 
+	docker-compose -f deploy/docker-compose.yaml up --build
 
 down:
-	docker-compose -f docker/docker-compose.yaml down --volumes
+	docker-compose -f deploy/docker-compose.yaml down --volumes
 
 logs:
-	docker-compose -f docker/docker-compose.yaml logs
+	docker-compose -f deploy/docker-compose.yaml logs
